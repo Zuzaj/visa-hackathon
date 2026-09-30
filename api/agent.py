@@ -8,6 +8,7 @@ on the active city. Individual competitor chain names are never available to
 the model: every aggregate here is already pooled to {hero, discounts,
 supermarket} before it reaches this module.
 """
+import datetime
 import json
 import os
 import pathlib
@@ -42,7 +43,9 @@ Answer only the question actually asked, as briefly as that question allows. A f
 
 Be concise and business-focused: this is for a retail director's decision-making, not a data scientist. Avoid jargon like "k-anonymity" or "pooled group" -- say "discount chains" / "supermarket chains" plainly.
 
-PLATFORM DATA (JSON, currently viewing month {month} year 2026):
+Today's real-world date is {today}. That is for your own grounding (e.g. interpreting how recent a web search result is) only -- it has nothing to do with the data below.
+
+PLATFORM DATA (JSON, historical, currently viewing month {month} -- a YYYYMM code, e.g. 202504 means April 2025):
 {context_json}
 """
 
@@ -87,6 +90,7 @@ def chat(messages: list[dict], month: int | None) -> str:
     system_prompt = SYSTEM_PROMPT.format(
         city=city,
         month=context["selected_month"],
+        today=datetime.date.today().isoformat(),
         context_json=json.dumps(context, default=str),
     )
 
