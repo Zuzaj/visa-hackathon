@@ -76,7 +76,7 @@ export function WhyTrustUs({ open, onClose }: Props) {
                           icon={Store}
                           label={SERIES_LABEL[group] ?? group}
                           value={`${info.market_share_pct}%`}
-                          sub={info.members.join(', ')}
+                          sub={`${info.members.join(', ')}, and others`}
                         />
                       ))}
                       <KpiTile

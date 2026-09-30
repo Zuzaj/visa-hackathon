@@ -1,12 +1,11 @@
 import { ImageOff } from 'lucide-react'
 import { useState } from 'react'
 import { formatMonth } from '../lib/api'
-import { MapLegend } from './MapLegend'
 
 // One static export per month from the ArcGIS layer -- drop each file at
-// web/public/maps/<YYYYMM>.png to activate it; until the file actually exists,
-// the <img>'s onError below swaps in a clear placeholder instead of the
-// browser's broken-image icon.
+// web/public/maps/<YYYYMM>.webp to activate it; until the file actually
+// exists, the <img>'s onError below swaps in a clear placeholder instead of
+// the browser's broken-image icon.
 const MAP_PATH_BY_MONTH: Record<number, string> = {
   202501: '/maps/202501.webp',
   202502: '/maps/202502.webp',
@@ -36,7 +35,7 @@ export function MonthlyChoroplethMap({ month }: { month: number }) {
           </div>
         )}
       </div>
-      <MapLegend />
+      <img src="/maps/legend.webp" alt="Month-over-month change legend" className="w-36 shrink-0" />
     </div>
   )
 }

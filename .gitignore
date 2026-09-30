@@ -5,6 +5,7 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+.venv/
 
 # Raw source data -- the 16GB parquet drop, never committed. The small
 # derived data/raw/card_month_4month.csv and data/out/*.parquet ARE tracked

@@ -7,6 +7,7 @@ import {
   MapPin,
   PieChart,
   Repeat,
+  Search,
   ShieldQuestion,
   ShoppingCart,
   Store,
@@ -17,6 +18,7 @@ import {
 import { useState } from 'react'
 import { Card } from '../components/Card'
 import { CardTypeChart } from '../components/CardTypeChart'
+import { ComingSoonOverlay } from '../components/ComingSoonOverlay'
 import { Hero } from '../components/Hero'
 import { JourneyButton } from '../components/JourneyButton'
 import { KpiTile } from '../components/KpiTile'
@@ -56,6 +58,7 @@ export function Overview({ onBack }: { onBack: () => void }) {
   const [tab, setTab] = useState<Tab>('Spotlight')
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [trustOpen, setTrustOpen] = useState(false)
+  const [diveDeeperOpen, setDiveDeeperOpen] = useState(false)
   const meta = useQuery({ queryKey: ['meta'], queryFn: api.meta })
   const overview = useQuery({ queryKey: ['overview'], queryFn: api.overview })
 
@@ -166,6 +169,13 @@ export function Overview({ onBack }: { onBack: () => void }) {
                   subtitle="Among shoppers whose Lidl spend fell month over month, which type of chain picked up the most of it."
                 >
                   <SignalBarChart data={poznan.data.signal} />
+                  <button
+                    onClick={() => setDiveDeeperOpen(true)}
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium w-fit"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    Dive deeper <Search size={14} />
+                  </button>
                 </Card>
 
                 <SoWhat
@@ -233,8 +243,8 @@ export function Overview({ onBack }: { onBack: () => void }) {
                     icon={Store}
                     label={SERIES_LABEL[group] ?? group}
                     value={`${info.market_share_pct}%`}
-                    sub={info.members.join(', ')}
-                    tooltip={`${SERIES_LABEL[group] ?? group} include ${info.members.join(', ')} — ${info.market_share_pct}% of ${meta.data.active_city}'s grocery market across the whole ${coverageLabel} dataset, not a single month.`}
+                    sub={`${info.members.join(', ')}, and others`}
+                    tooltip={`${SERIES_LABEL[group] ?? group} include ${info.members.join(', ')}, and others — ${info.market_share_pct}% of ${meta.data.active_city}'s grocery market across the whole ${coverageLabel} dataset, not a single month.`}
                   />
                 ))}
               </section>
@@ -425,6 +435,7 @@ export function Overview({ onBack }: { onBack: () => void }) {
         Why trust us?
       </button>
       <WhyTrustUs open={trustOpen} onClose={() => setTrustOpen(false)} />
+      <ComingSoonOverlay open={diveDeeperOpen} onClose={() => setDiveDeeperOpen(false)} />
 
       <MarketSpecialist month={selectedMonth ?? monthsCovered.at(-1) ?? null} />
     </div>
