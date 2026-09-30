@@ -13,6 +13,7 @@ Every response is built from the POOLED (chain_group) view -- there is no
 `display_mode` override here, even though the aggregate files still carry
 the underlying chain for the pipeline's own use.
 """
+import os
 import pathlib
 import sys
 
@@ -29,9 +30,14 @@ with open(ROOT / "config.yaml") as f:
     CONFIG = yaml.safe_load(f)
 
 app = FastAPI(title="Wallet Radar API")
+# FRONTEND_ORIGIN lets a deployed frontend (e.g. Render's static site, whose
+# exact <name>.onrender.com subdomain isn't known until first deploy) opt in
+# without hardcoding a guessed URL -- unset locally, where the Vite dev
+# server's own origin is enough.
+_extra_origin = os.environ.get("FRONTEND_ORIGIN")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173"] + ([_extra_origin] if _extra_origin else []),
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
