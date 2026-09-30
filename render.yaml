@@ -23,7 +23,6 @@ services:
   - type: web
     name: wanted-web
     runtime: static
-    plan: free
     rootDir: web
     buildCommand: npm install && npm run build
     staticPublishPath: dist
