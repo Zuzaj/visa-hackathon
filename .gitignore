@@ -1,0 +1,15 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Raw source data -- the 16GB parquet drop, never committed. The small
+# derived data/raw/card_month_4month.csv and data/out/*.parquet ARE tracked
+# (see pipeline/extract_card_month_csv.py) so the repo stays runnable.
+data/raw/*.parquet
+
+# OS
+.DS_Store

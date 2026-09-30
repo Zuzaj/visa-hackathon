@@ -1,0 +1,111 @@
+# Wallet Radar configuration
+# All thresholds and definitions from the plan live here (section 5), not in code.
+
+data:
+  card_month_path: data/raw/card_month_4month.csv
+  # Once the 18-month drop lands, point this at the full file. No pipeline code
+  # should need to change -- only this path (and the derived window checks below).
+
+chains:
+  hero: lidl
+  # The original 7 covered only ~83% of actual MCC-5411 (grocery) spend in
+  # Poznan -- Auchan alone is ~7-8% of the market, bigger than Carrefour,
+  # Kaufland, Netto or Aldi individually, and was completely untracked. These
+  # 4 additions (auchan, intermarche, spolem, dino) bring tracked coverage to
+  # ~95%, confirmed against pipeline/notebooks/extract_card_month_data.ipynb's
+  # raw merchant-name analysis. See pipeline/extract_card_month_csv.py.
+  all: [lidl, kaufland, biedronka, netto, stokrotka, aldi, carrefour, auchan, intermarche, spolem, dino]
+  spend_columns:
+    lidl: spd_lidl
+    kaufland: spd_kaufland
+    biedronka: spd_biedronka
+    netto: spd_netto
+    stokrotka: spd_stokrotka
+    aldi: spd_aldi
+    carrefour: spd_carrefour
+    auchan: spd_auchan
+    intermarche: spd_intermarche
+    spolem: spd_spolem
+    dino: spd_dino
+  # pooled is the ONLY mode: every metric (spend, share, customer counts) is
+  # reported at the group level, never per individual chain -- the API
+  # hardcodes this regardless of what a caller requests, see api/main.py.
+  # The static group *composition* (which chains are in each group) is fine
+  # to disclose -- see group_info below -- since it isn't tied to any
+  # customer or behavior, unlike a per-chain spend/switching breakdown would be.
+  display_mode: pooled
+  # Grouped by retail format (hard-discount vs traditional supermarket/
+  # hypermarket), which happens to land close to even on its own: ~57%/43%
+  # of non-Lidl customers (an improvement on the old 7-chain split's ~58%/42%).
+  # Each group still keeps >=2 chains, so no individual competitor's own
+  # numbers are ever exposed.
+  pooled_groups:
+    discounts: [biedronka, aldi, netto, dino]
+    supermarket: [kaufland, stokrotka, carrefour, auchan, intermarche, spolem]
+  # Display names + each group's share of the TRUE total Poznan grocery
+  # market (MCC 5411, ALL merchants -- not just the 11 tracked chains, so
+  # this differs from the tracked-only "wallet share" KPI). Computed once
+  # from the raw parquet for the Jan-Apr 2025 window this app serves; static
+  # since city-level format shares don't move month to month for a demo.
+  # Recompute if the data window or merchant mapping changes.
+  group_info:
+    discounts:
+      members: [Biedronka, Aldi, Netto, Dino]
+      market_share_pct: 41.8
+    supermarket:
+      members: [Kaufland, Stokrotka, Carrefour, Auchan, "Intermarché", "Społem"]
+      market_share_pct: 21.7
+  # Lidl's own share of the TRUE total market (same basis as group_info
+  # above) -- differs from the "wallet share" KPI, which is Lidl's share of
+  # only the 11 tracked chains, a smaller and higher denominator-free base.
+  lidl_market_share_pct: 31.0
+  # Share of Poznan's TRUE grocery market (MCC 5411, all merchants) captured
+  # by this dashboard overall -- lidl_market_share_pct + both group_info
+  # market_share_pct values above. The remainder (~5.5%) is untracked
+  # small/independent grocers, below any threshold worth chasing individually.
+  total_market_coverage_pct: 94.5
+
+lifecycle:
+  # "Lidl regular at month M": Lidl spend > 0 in at least regular_min_months
+  # of the regular_window_months ending at M.
+  regular_window_months: 4
+  regular_min_months: 3
+  # "Lapsed": a regular with zero Lidl spend in each of the next lapse_window_months.
+  lapse_window_months: 2
+  # Destination window: months before/after the lapse month used to compare spend.
+  destination_window_months: 3
+  # Stayer test: non-Lidl spend in at least this many of destination_window_months
+  # months starting at the lapse month.
+  stayer_min_active_months: 2
+  # Exclude this many trailing months of data from lapse labels (can't confirm
+  # a lapse without lapse_window_months of future data).
+  edge_exclusion_months: 2
+  # "Switched to another chain" vs "spending less": share of prior spend recovered
+  # elsewhere in the destination window.
+  switch_threshold_share: 0.7
+  # Wins: no Lidl spend for at least this many months, then starts spending at Lidl.
+  win_min_absence_months: 2
+  # Cross-shopping / share-erosion window.
+  recent_window_months: 3
+
+privacy:
+  # Minimum distinct cards per exported aggregate row. Set to the challenge
+  # brief's own regulatory floor (>=30 cards per analyzed group) -- was 20.
+  k_min: 30
+
+geography:
+  # Level used for geographic aggregation. Revisit once the crosswalk (lau_enr/
+  # fua_enr) and the full 18-month file are available -- postal code is still
+  # too sparse for k_min=30 almost everywhere at this scale.
+  level: pstl_cd_enr
+  # The whole card-month sample is Poznan cardholders (confirmed by the data
+  # provider) -- there is no national-vs-regional split to make here. This is
+  # the city the POC actually has data for and serves on the home screen.
+  active_city: Poznań
+  # The product is meant to scale to any Lidl Poland market, not just Poznan.
+  # These show as "coming soon" on the home screen to signal that scope --
+  # they carry no data yet.
+  planned_cities: [Warszawa, Krakow, Wroclaw, Gdansk, Lodz]
+
+currency:
+  label: VC   # Visa Coins (fictional currency) -- never presented as a real-market total
