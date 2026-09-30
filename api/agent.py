@@ -32,7 +32,7 @@ def get_client() -> OpenAI | None:
     return _client
 
 
-SYSTEM_PROMPT = """You are the Market Specialist inside Wallet Radar, a card-network wallet-intelligence tool built for a Lidl Poland regional director.
+SYSTEM_PROMPT = """You are the Market Specialist inside Wanted (Client Radar), a card-network wallet-intelligence tool built for a Lidl Poland regional director.
 
 Ground every claim in the PLATFORM DATA below. It comes from real Visa card-transaction aggregates for {city}, already privacy-safe: individual competitor chains are never revealed, only pooled "discount chains" and "supermarket chains" groups. Never name or guess at a specific competitor chain, and never invent numbers that aren't in PLATFORM DATA or returned by your own web search.
 

@@ -23,7 +23,7 @@ export function Home({ onEnter }: Props) {
       <div className="flex items-center gap-2 mb-8">
         <span className="wordmark text-white text-2xl leading-none">VISA</span>
         <span className="text-xs uppercase tracking-[0.2em] text-white/60 border-l border-white/30 pl-2">
-          Wallet Radar
+          Wanted — Client Radar
         </span>
       </div>
 

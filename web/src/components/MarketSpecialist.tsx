@@ -46,7 +46,7 @@ export function MarketSpecialist({ month }: { month: number | null }) {
   }
 
   function downloadTranscript() {
-    const header = `Wallet Radar — AI Market Specialist conversation\n${new Date().toLocaleString()}\n`
+    const header = `Wanted — AI Market Specialist conversation\n${new Date().toLocaleString()}\n`
     const body = messages
       .map((m) => `${m.role === 'user' ? 'You' : 'Market Specialist'}:\n${m.content}`)
       .join('\n\n---\n\n')

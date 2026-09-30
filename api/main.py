@@ -1,4 +1,4 @@
-"""Wallet Radar API. Reads only the exported aggregates in data/out/ --
+"""Wanted (Client Radar) API. Reads only the exported aggregates in data/out/ --
 never the card-month panel or anything card-level. See pipeline/ for how
 those aggregates are built.
 
@@ -29,7 +29,7 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 with open(ROOT / "config.yaml") as f:
     CONFIG = yaml.safe_load(f)
 
-app = FastAPI(title="Wallet Radar API")
+app = FastAPI(title="Wanted API")
 # FRONTEND_ORIGIN lets a deployed frontend (e.g. Render's static site, whose
 # exact <name>.onrender.com subdomain isn't known until first deploy) opt in
 # without hardcoding a guessed URL -- unset locally, where the Vite dev

@@ -1,7 +1,7 @@
 services:
   # FastAPI backend -- serves /api/* from the committed data/out aggregates.
   - type: web
-    name: wallet-radar-api
+    name: wanted-api
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -13,7 +13,7 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       # Set this to the frontend's actual onrender.com URL once it's known
-      # (see wallet-radar-web below) -- lets the browser's CORS check pass.
+      # (see wanted-web below) -- lets the browser's CORS check pass.
       - key: FRONTEND_ORIGIN
         sync: false
 
@@ -21,7 +21,7 @@ services:
   # fetch('/api/...') calls in web/src/lib/api.ts work unchanged in
   # production, exactly as Vite's own dev-server proxy does locally.
   - type: web
-    name: wallet-radar-web
+    name: wanted-web
     runtime: static
     plan: free
     rootDir: web
@@ -30,7 +30,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://wallet-radar-api.onrender.com/api/*
+        destination: https://wanted-api.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html

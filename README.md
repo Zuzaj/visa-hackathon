@@ -1,4 +1,4 @@
-# Wallet Radar
+# Wanted — Client Radar
 
 A card-network wallet-intelligence proof of concept for a **Lidl Poland regional director**: which grocery shoppers in Poznań are drifting away from Lidl, where their spend is going instead, and how big that opportunity actually is — built entirely from aggregated Visa card-transaction data.
 
