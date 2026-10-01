@@ -15,21 +15,25 @@ import pathlib
 import re
 
 from dotenv import load_dotenv
-from openai import APIStatusError, OpenAI
+from openai import APIStatusError, AzureOpenAI
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
 
-_client: OpenAI | None = None
+_client: AzureOpenAI | None = None
 
 
-def get_client() -> OpenAI | None:
+def get_client() -> AzureOpenAI | None:
     global _client
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         return None
     if _client is None:
-        _client = OpenAI(api_key=api_key)
+        _client = AzureOpenAI(
+            api_version="2025-04-01-preview",
+            azure_endpoint="https://zuzannajarlaczynska-692-resource.cognitiveservices.azure.com/",
+            api_key=api_key
+    )
     return _client
 
 
@@ -96,7 +100,7 @@ def chat(messages: list[dict], month: int | None) -> str:
 
     try:
         response = client.responses.create(
-            model="gpt-5",
+            model="gpt-5.5",
             instructions=system_prompt,
             input=[{"role": m["role"], "content": m["content"]} for m in messages],
             tools=[
